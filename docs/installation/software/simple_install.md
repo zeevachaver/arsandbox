@@ -1,149 +1,91 @@
-# Simple Augmented Reality Sandbox Installation guide
+# Installing DataLab VR Software
 
 <!-- define abbreviations -->
 *[ARSandbox]: Augmented Reality Sandbox
 
-<!-- In the following, when asked to enter something into a terminal, each
-line you are supposed to enter starts with a `$` denoting the
-terminal's command prompt. Do *not* enter that `$`, but enter
-everything that follows, and end each line by pressing the Enter key. -->
+The following instructions describe the simplified installation procedure for DataLab-developed VR software, using PullPackage, a simple custom package management tool.
 
-??? info "Heads up!"
-    Angle brackets `<>` in commands below are placeholders, meaning that you have to replace everything between, and including, the angle brackets with some text that depends on your specific circumstances.
+## Prerequisites
+DataLab's VR software runs on the Linux operating system, and requires that operating system to run on a real computer, in other words, not on a virtual machine. While DataLab's VR software runs on any Linux distribution, PullPackage, DataLab's package manager, currently only works with two large families of Linux distributions: 
 
-    For example, if your host has eight CPUs, instead of entering `-j<number of CPUs>` as part of some command, you would enter `-j8`.
+* RedHat (RedHat Linux, CentOS, Fedora, ...)  
+* Ubuntu (Ubuntu, Linux Mint, ...)
 
-## Step 1: Download the ARSandbox repository from GitHub
+Additionally, running DataLab's VR software effectively requires that the computer has a discrete graphics card, and has the drivers for that graphics card installed.
 
-The ARSandbox code repository can be downloaded either by:
+In detail, the prerequisite installation steps are as follows:
 
-1. downloading the zip file and unpacking it **OR**
-2. cloning the repository with `git clone`
+1. Install a compatible (RedHat- or Ubuntu-based) Linux version on a real computer (not a virtual machine), either as sole operating system or in a dual-boot configuration.
 
-!!! warning
-    If you are unfamiliar with git and/or GitHub, you should probably go the zip file route.
+2. Install the proper driver for the computer's discrete graphics card. For Nvidia graphics cards, this must be the vendor-supplied nvidia driver, not the open-source nouveau driver.
 
-### Option 1: Downloading and unpacking a zip file from GitHub
+## Install PullPackage
 
-On [the ARSandbox repository's main page](https://github.com/vrui-vr/arsandbox), click on the green "<> Code" button, and then click on "Download ZIP" in the menu that pops up in response.
-
-![Downloading a ZIP from a GitHub repo](download_zip.png)
-
-Depending on your browser settings, you may be asked where to store the file being downloaded, or it might be stored in a default location, such as your `Downloads` directory. Take note of what the zip file is called and where it is stored.
-
-Assuming that you already created the `src` directory *according to Vrui's installation instructions*, enter the following line into a terminal window once the file is completely downloaded:
+To install the PullPackage package manager, copy the command from the following box into a terminal window and press the Enter key:
 
 ```sh
-cd ~/src
+curl https://vroom.library.ucdavis.edu/PullPackage | bash
 ```
 
-Then enter into the same terminal window:
+
+At some point during installation, the terminal window will ask you to enter your user password. This is required to create files in several system locations. Specifically, those locations are:
 
 ```sh
-unzip <path to downloaded zip file>
+/opt/PullPackage
+/usr/local/bin
 ```
 
-Replace `<path to downloaded zip file>` with the full path to the zip file, for example `~/Downloads/arsandbox-main.zip`.
+Later on, PullPackage may ask for your user password again to install packages such as Vrui or SARndbox. Generally, software packages installed by PullPackage end up inside the /opt directory, and may create files in /usr/local/bin and inside the /etc directory.
 
-Finally, check for the name of your new ARSandbox directory by entering:
+If the terminal responds with an error message like "bash: curl: command not found", please copy and run the following alternative command:
 
 ```sh
-ls
+wget -O - https://vroom.library.ucdavis.edu/PullPackage | bash
 ```
 
-which will list all files in the `src` directory, which should include a new directory called `arsandbox-main`. Take note of this name, and then enter into that directory by typing this command into the terminal window:
+If either of the two commands above succeed, you are ready to install DataLab VR software.
+
+## Install the ARSandbox
+
+After PullPackage has been installed successfully, the ARSandbox can be installed by entering the following commands into a terminal window in the order below.
+
+Vrui is a software development toolkit for interactive virtual reality applications. It is also the foundation of the ARSandbox.
 
 ```sh
-cd <ARSandbox directory>
+PullPackage Vrui
 ```
 
-where you replace `<ARSandbox directory>` with the name of the directory where you cloned/unpacked the ARSandbox in the previous step, as printed by `ls`.
-
-### Option 2: Clone the repository from GitHub
-
-Assuming that you already created the `src` directory *according to Vrui's installation instructions*, navigate to the `src` directory on your computer in the terminal window.
+The Kinect package contains drivers for several types of 3D cameras that are used by the ARSandbox, including two versions of the original Microsoft Kinect camera.
 
 ```sh
-cd ~/src
+PullPackage Kinect
 ```
 
-Then, clone the repository from GitHub:
+The SARndbox package contains the actual ARSandbox application.
 
 ```sh
-git clone https://github.com/vrui-vr/arsandbox.git
+PullPackage SARndbox
 ```
 
-Finally, check for the name of your new ARSandbox directory by entering:
+Alternatively, the following command will install all three packages required for the ARSandbox in one go:
 
 ```sh
-ls
+PullPackage Vrui && PullPackage Kinect && PullPackage SARndbox
 ```
 
-which will list all files in the `src` directory, which should include a new directory called `arsandbox`. Take note of this name, and then enter into that directory by typing this command into the terminal window:
+## Install Support for SteamVR Headsets (HTC Vive, HTC Vive Pro, Valve Index...)
+In order to use SteamVR-compatible commodity VR headsets with Vrui VR software, install the SteamVR package before installing the Vrui package:
 
 ```sh
-cd <ARSandbox directory>
-```
+PullPackage SteamVR 
+```	
+??? note
+    The SteamVR package is not a complete Steam and/or SteamVR installation. It only contains the low-level drivers required to connect Vrui VR software to SteamVR headsets. To avoid compatibility issues, we strongly recommend that you install this package even if you already have Steam and/or SteamVR installed on your computer.
 
-where you replace `<ARSandbox directory>` with the name of the directory where you cloned/unpacked the ARSandbox in the previous step, as printed by `ls`.
+## Install Other Vrui VR Applications
+To install other Vrui VR applications such as 3D Visualizer, LiDAR Viewer, VR ProtoShop, etc., first install the Vrui package (and optionally the SteamVR package before it), then install the package(s) for the desired Vrui application(s).
 
-## Step 2: Build the ARSandbox
+### List of Currently Hosted Vrui VR Applications
 
-!!! info "Heads up!"
-    Make sure you are in the new `arsandbox-main` (from option 1) or `arsandbox` (from option 2) directory.
-
-To build the ARSandbox, enter into the same terminal window:
-
-```sh
-make VRUI_MAKEDIR=<Vrui build system location>
-```
-
-where you replace `<Vrui build system location>` with the location of Vrui's build system on your host, as described in Vrui's installation instructions.
-
-!!! example
-    Your command will look something like this:
-
-    ```
-    make VRUI_MAKEDIR=/usr/local/share/Vrui-13.1/make
-    ```
-
-???+ tip
-    You can **speed up the build process** if your host has multiple CPUs or CPU cores. Instead of the above, enter into the same terminal:
-
-    ```
-    make VRUI_MAKEDIR=<Vrui build system location> -j<number of cpus>
-    ```
-
-    again replacing `<Vrui build system location>` with the location of Vrui's build system on your host, and replacing `<number of cpus>` with the number of CPUs or CPU cores on your host, say `-j8` if you have eight cores. Note that there is no space between the `-j` and the number of cores.
-
-    Using `-j$(nproc)` (exactly as written) will tell your computer to figure out how many cores it has.
-
-
-Once `make` has finished running, check that there were no error messages. The quickest way to check whether the ARSandbox built successfully is to run the `make` command a second time, *exactly* as you entered it the first time.
-
-If everything went well the first time, the second run will print:
-
-```sh
-make: Nothing to be done for 'all'.
-```
-
-<!-- !!! tip
-    The easiest way to repeat a previous command is to press the "cursor up" key until the command appears on the command line, then press the Enter key. -->
-
-## Step 3: Installing the ARSandbox
-
-If built following these simple instructions, the ARSandbox *does not need to be installed.* You can run the built applications, `CalibrateProjector`, `SARndbox`, and `SARndboxClient`, directly from the directory where you cloned or unpacked the sources.
-
-For example, to run the main ARSandbox application, you would enter the following into a terminal window:
-
-```sh
-cd <ARSandbox directory>
-./bin/SARndbox
-```
-
-where you replace `<ARSandbox directory>` with the full name of the directory where you cloned/unpacked the ARSandbox sources, for example:
-
-```sh
-cd ~/src/arsandbox-main
-./bin/SARndbox
-```
+* 3DVisualizer: The 3D Visualizer application to analyze volumetric 3D gridded data.
+* LidarViewer: The LiDAR Viewer application to visualize and measure very large 3D point cloud data.
